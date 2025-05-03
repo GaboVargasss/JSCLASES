@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Ejemplo Completo de Chart.js con Colores Estéticos</title>
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <div class="container my-5">
+    <h1 class="text-center mb-5 text-primary">Ejemplo de Gráficas con JS</h1>
+    <div class="row gy-4">
+      <!-- Líneas -->
+      <div class="col-md-6">
+        <h5 class="text-info">Gráfico de Líneas</h5>
+        <canvas id="lineaChart"></canvas>
+      </div>
+      <!-- Barras -->
+      <div class="col-md-6">
+        <h5 class="text-success">Gráfico de Barras</h5>
+        <canvas id="barChart"></canvas>
+      </div>
+      <!-- Dona -->
+      <div class="col-md-6">
+        <h5 class="text-warning">Gráfico de Dona</h5>
+        <canvas id="donutChart"></canvas>
+      </div>
+      <!-- Pie -->
+      <div class="col-md-6">
+        <h5 class="text-danger">Gráfico de Pie</h5>
+        <canvas id="pieChart"></canvas>
+      </div>
+      <!-- Radar -->
+      <div class="col-md-6">
+        <h5 class="text-secondary">Gráfico de Radar</h5>
+        <canvas id="radarChart"></canvas>
+      </div>
+      <!-- Área Polar -->
+      <div class="col-md-6">
+        <h5 class="text-dark">Gráfico de Área Polar</h5>
+        <canvas id="polarAreaChart"></canvas>
+      </div>
+      <!-- Burbujas -->
+      <div class="col-md-6">
+        <h5 class="text-muted">Gráfico Creativo: Burbujas</h5>
+        <canvas id="bubbleChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const labels = [
+      'Enero','Febrero','Marzo','Abril',
+      'Mayo','Junio','Julio','Agosto',
+      'Septiembre','Octubre','Noviembre','Diciembre'
+    ];
+    const data = [40,10,15,35,58,80,17,2,30,0,-10,120];
+
+    // Paleta vibrante
+    const vibrantPalette = [
+      '#FF6B6B','#FFD93D','#6BCB77','#4D96FF',
+      '#9D4EDD','#FF8A5B','#FFCA3A','#8AC926',
+      '#1982C4','#6A4C93','#FF1678','#06D6A0'
+    ];
+
+    // Función para oscurecer/aclarar un color
+    function shadeColor(color, percent) {
+      const f = parseInt(color.slice(1), 16);
+      const t = percent < 0 ? 0 : 255;
+      const p = Math.abs(percent) / 100;
+      const R = f >> 16, G = (f >> 8) & 0xFF, B = f & 0xFF;
+      const newR = Math.round((t - R) * p) + R;
+      const newG = Math.round((t - G) * p) + G;
+      const newB = Math.round((t - B) * p) + B;
+      return `#${(0x1000000 + (newR<<16) + (newG<<8) + newB).toString(16).slice(1)}`;
+    }
+
+    // 1) Lineas
+    new Chart(document.getElementById('lineaChart'), {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [{
+          label: 'Ventas',
+          data,
+          borderColor: '#FF6B6B',
+          backgroundColor: 'rgba(255,107,107,0.2)',
+          tension: 0.4,
+          pointBackgroundColor: '#FFD93D',
+          pointBorderColor: '#FFF',
+          pointRadius: 5,
+          fill: true
+        }]
+      },
+      options: {
+        plugins: { legend: { labels: { color: '#333', font: { weight: 'bold' } } } },
+        scales: {
+          x: { ticks: { color: '#333' }, grid: { color: 'rgba(0,0,0,0.05)' } },
+          y: { ticks: { color: '#333' }, grid: { color: 'rgba(0,0,0,0.05)' } }
+        }
+      }
+    });
+
+    // 2) Barras
+    new Chart(document.getElementById('barChart'), {
+      type: 'bar',
+      data: {
+        labels,
+        datasets: [{
+          label: 'Ventas por barras',
+          data,
+          backgroundColor: vibrantPalette,
+          borderColor: vibrantPalette.map(c => shadeColor(c, -20)),
+          borderWidth: 2
+        }]
+      },
+      options: {
+        plugins: { legend: { display: false } },
+        scales: {
+          x: { ticks: { color: '#333' }, grid: { display: false } },
+          y: { ticks: { color: '#333' }, grid: { color: 'rgba(0,0,0,0.05)' } }
+        }
+      }
+    });
+
+    // 3) Dona
+    new Chart(document.getElementById('donutChart'), {
+      type: 'doughnut',
+      data: {
+        labels,
+        datasets: [{
+          label: 'Ventas por Dona',
+          data,
+          backgroundColor: vibrantPalette,
+          borderColor: '#FFF',
+          borderWidth: 3
+        }]
+      },
+      options: {
+        cutout: '60%',
+        plugins: {
+          legend: {
+            position: 'right',
+            labels: { color: '#333', boxWidth: 12, padding: 20 }
+          }
+        }
+      }
+    });
+
+    // 4) Pie
+    new Chart(document.getElementById('pieChart'), {
+      type: 'pie',
+      data: {
+        labels,
+        datasets: [{
+          data,
+          backgroundColor: vibrantPalette,
+          borderColor: '#FFF',
+          borderWidth: 2
+        }]
+      },
+      options: {
+        plugins: { legend: { position: 'bottom', labels: { color: '#333' } } }
+      }
+    });
+
+    // 5) Radar
+    new Chart(document.getElementById('radarChart'), {
+      type: 'radar',
+      data: {
+        labels,
+        datasets: [{
+          label: 'Ventas Radar',
+          data,
+          backgroundColor: 'rgba(77,150,255,0.3)',
+          borderColor: '#4D96FF',
+          pointBackgroundColor: '#FFD93D',
+          pointBorderColor: '#FFF'
+        }]
+      },
+      options: {
+        scales: { r: {
+            angleLines: { color: 'rgba(0,0,0,0.1)' },
+            grid: { color: 'rgba(0,0,0,0.05)' },
+            ticks: { color: '#333' }
+        }}
+      }
+    });
+
+    // 6) Área Polar
+    new Chart(document.getElementById('polarAreaChart'), {
+      type: 'polarArea',
+      data: {
+        labels,
+        datasets: [{
+          data,
+          backgroundColor: vibrantPalette.map(c => shadeColor(c, 20)),
+          borderColor: vibrantPalette.map(c => shadeColor(c, -20)),
+          borderWidth: 1
+        }]
+      },
+      options: {
+        scales: { r: {
+            grid: { color: 'rgba(0,0,0,0.05)' },
+            ticks: { color: '#333' }
+        }},
+        plugins: { legend: { position: 'right', labels: { color: '#333' } } }
+      }
+    });
+
+    // 7) Burbujas
+    const bubbleData = data.map((v, i) => ({
+      x: i + 1,
+      y: v,
+      r: Math.abs(v) / 2 + 5
+    }));
+    new Chart(document.getElementById('bubbleChart'), {
+      type: 'bubble',
+      data: {
+        labels,
+        datasets: [{
+          label: 'Ventas Burbujas',
+          data: bubbleData,
+          backgroundColor: 'rgba(155,40,237,0.4)',
+          borderColor: '#9D4EDD'
+        }]
+      },
+      options: {
+        scales: {
+          x: {
+            title: { display: true, text: 'Mes (número)', color: '#333' },
+            grid: { color: 'rgba(0,0,0,0.05)' }
+          },
+          y: {
+            title: { display: true, text: 'Ventas', color: '#333' },
+            grid: { color: 'rgba(0,0,0,0.05)' }
+          }
+        },
+        plugins: {
+          tooltip: {
+            callbacks: {
+              label(ctx) {
+                return `${labels[ctx.dataIndex]}: ${ctx.parsed.y}`;
+              }
+            }
+          }
+        }
+      }
+    });
+  </script>
+</body>
+</html>
